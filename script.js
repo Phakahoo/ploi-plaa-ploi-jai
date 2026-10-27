@@ -56,7 +56,7 @@ const T = {
     yourFish: 'ปลาของคุณคือ', disclaimer: 'ความหมายของปลาเป็นการตีความเชิงสร้างสรรค์ของโครงการนี้ ไม่ใช่คำทำนายหรือคำรับรองโชคลาภ',
     toDeco: 'ไปแต่งตัวให้ปลา', meaningLbl: 'ความหมาย: ', symLbl: 'สัญลักษณ์: ',
     revMsg: (a1, a5, s) => `คุณอยากให้ "${a1}" ค่อย ๆ ดีขึ้น และอยากฝาก "${a5}" ไว้กับสายน้ำ ขอให้${s}เป็นเพื่อนร่วมทางของคุณ`,
-    decoTitle: 'แต่งตัวให้ปลาของคุณ', decoHint: 'แตะเพื่อวางของตกแต่ง หรือลากจากคลังไปวางบนตัวปลา ลากเพื่อย้าย กดลูกศรบนคีย์บอร์ดเพื่อขยับ กด Delete เพื่อลบ',
+    decoTitle: 'แต่งตัวให้ปลาของคุณ', decoHint: 'แตะเพื่อวางของตกแต่ง หรือลากจากคลังไปวางบนตัวปลา ลากเพื่อย้าย ลากจุดมุมของกรอบเพื่อย่อ–ขยาย (หรือกด + / − บนคีย์บอร์ด) กดลูกศรเพื่อขยับ กด Delete เพื่อลบ',
     removeSel: 'ลบชิ้นที่เลือก', resetDeco: 'รีเซ็ตการตกแต่ง', library: 'คลังของตกแต่ง', removeOne: 'ลบ',
     powerTitle: 'พลังความปรารถนา', powerNote: 'ค่านี้เป็นเพียงกติกาสร้างสรรค์ของประสบการณ์นี้ ไม่ใช่ความน่าจะเป็นจริงของความสำเร็จ เงิน สุขภาพ หรือความรัก',
     m_study: 'พลังการเรียนและการงานของคุณเพิ่มขึ้นอีกนิด ✨', m_health: 'พลังแห่งการดูแลตัวเองเพิ่มขึ้นอีกนิด ✨',
@@ -80,7 +80,7 @@ const T = {
     yourFish: 'Your fish is', disclaimer: 'Fish symbolism is this project’s creative interpretation, not a prediction or a promise of fortune.',
     toDeco: 'Decorate your fish', meaningLbl: 'Meaning: ', symLbl: 'Symbolism: ',
     revMsg: (a1, a5, s) => `You hope “${a1}” goes gently well, and you’d leave “${a5}” with the river. May ${s} keep you company.`,
-    decoTitle: 'Decorate Your Fish', decoHint: 'Tap an accessory to place it, or drag it from the library onto the fish. Drag to move; use arrow keys to nudge and Delete to remove.',
+    decoTitle: 'Decorate Your Fish', decoHint: 'Tap an accessory to place it, or drag it from the library onto the fish. Drag to move; drag a corner handle to resize (or press + / −); use arrow keys to nudge and Delete to remove.',
     removeSel: 'Remove selected', resetDeco: 'Reset decoration', library: 'Accessory library', removeOne: 'Remove',
     powerTitle: 'Wish Power', powerNote: 'These values are a creative rule of this experience, not real probabilities of success, wealth, health or love.',
     m_study: 'Your studies & career wish grows a little stronger ✨', m_health: 'Your wellbeing wish grows a little stronger ✨',
@@ -163,10 +163,11 @@ function scoreFish() {
 }
 
 /* ========== FISH REVEAL ========== */
+const HANDLES = ['nw', 'ne', 'sw', 'se'].map(c => `<span class="hdl ${c}" data-corner="${c}" aria-hidden="true"></span>`).join('');
 function fishHTML(live) {
   const accs = S.items.map(it => {
     const a = accById(it.id);
-    return `<div class="acc${a.id === 'sparkle' ? ' spark' : ''}" data-uid="${it.uid}" style="left:${it.x * 100}%;top:${it.y * 100}%;width:${a.w * 100}%"${live ? ' tabindex="0" role="button"' : ''} aria-label="${a.n[L()]}"><img src="${src(a.f)}" alt="${a.n[L()]}" draggable="false">${live ? `<button class="rm" data-act="rmOne" aria-label="${t('removeOne')} ${a.n[L()]}">×</button>` : ''}</div>`;
+    return `<div class="acc${a.id === 'sparkle' ? ' spark' : ''}" data-uid="${it.uid}" style="left:${it.x * 100}%;top:${it.y * 100}%;width:${(it.w ?? a.w) * 100}%"${live ? ' tabindex="0" role="button"' : ''} aria-label="${a.n[L()]}"><img src="${src(a.f)}" alt="${a.n[L()]}" draggable="false">${live ? `<button class="rm" data-act="rmOne" aria-label="${t('removeOne')} ${a.n[L()]}">×</button>${HANDLES}` : ''}</div>`;
   }).join('');
   return `<img class="fish" src="${src(S.fish.f)}" alt="${S.fish.n[L()]}" draggable="false">${accs}`;
 }
@@ -195,7 +196,7 @@ function updateSel() {
 function addItem(id, pos) {
   if (S.items.filter(i => i.id === id).length >= MAX_COPIES) return null;
   const a = accById(id), isNew = !S.items.some(i => i.id === id);
-  const it = { uid: ++S.uid, id, x: pos ? clamp(pos.x, 0, 1) : a.x, y: pos ? clamp(pos.y, 0, 1) : a.y };
+  const it = { uid: ++S.uid, id, x: pos ? clamp(pos.x, 0, 1) : a.x, y: pos ? clamp(pos.y, 0, 1) : a.y, w: a.w };
   S.items.push(it); S.sel = it.uid;
   if (isNew) { const cats = Object.keys(a.b); S.notice = cats.length > 4 ? 'm_all' : 'm_' + cats[0]; $('notice').textContent = t(S.notice); }
   renderStage(); renderPower($('powerMini'));
@@ -210,11 +211,16 @@ function toNorm(e) {
   const r = stageEl().getBoundingClientRect();
   return { x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height, inside: e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom };
 }
-let drag = null, lp = null, relDrag = null;
+let drag = null, lp = null, relDrag = null, resize = null;
 function setPos(it, x, y) {
   it.x = clamp(x, 0, 1); it.y = clamp(y, 0, 1);
   const el = stageEl().querySelector(`[data-uid="${it.uid}"]`);
   if (el) { el.style.left = it.x * 100 + '%'; el.style.top = it.y * 100 + '%'; }
+}
+function setWidth(it, w) { // width is a fraction of the stage; height follows the PNG's own ratio, so it never distorts
+  it.w = clamp(w, .05, 1.2);
+  const el = stageEl().querySelector(`[data-uid="${it.uid}"]`);
+  if (el) el.style.width = it.w * 100 + '%';
 }
 function initDecorate() {
   $('lib').addEventListener('pointerdown', e => {
@@ -228,6 +234,24 @@ function initDecorate() {
     const el = e.target.closest('.acc'); if (!el || e.target.closest('.rm')) return;
     const it = S.items.find(i => i.uid === Number(el.dataset.uid)); if (!it) return;
     S.sel = it.uid; updateSel();
+    if (e.target.closest('.hdl')) { // Resize proportionally from the item's centre.
+      // Measure from the actual selected element centre. A minimum starting distance
+      // prevents an enormous scale jump when the pointer starts very close to centre.
+      const box = el.getBoundingClientRect();
+      const cx = box.left + box.width / 2;
+      const cy = box.top + box.height / 2;
+      const d0 = Math.hypot(e.clientX - cx, e.clientY - cy);
+      resize = {
+        it,
+        w0: it.w ?? accById(it.id).w,
+        cx,
+        cy,
+        d0: Math.max(d0, 20)
+      };
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
     const n = toNorm(e); drag = { it, dx: n.x - it.x, dy: n.y - it.y };
     e.preventDefault();
   });
@@ -236,7 +260,8 @@ function initDecorate() {
     const it = S.items.find(i => i.uid === S.sel); if (!it) return;
     const d = e.shiftKey ? .04 : .01;
     const m = { ArrowLeft: [-d, 0], ArrowRight: [d, 0], ArrowUp: [0, -d], ArrowDown: [0, d] }[e.key];
-    if (m) { e.preventDefault(); setPos(it, it.x + m[0], it.y + m[1]); }
+    if (e.key === '+' || e.key === '=' || e.key === '-' || e.key === '_') { e.preventDefault(); setWidth(it, (it.w ?? accById(it.id).w) * (e.key === '+' || e.key === '=' ? 1.08 : 1 / 1.08)); }
+    else if (m) { e.preventDefault(); setPos(it, it.x + m[0], it.y + m[1]); }
     else if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); removeItem(it.uid); stageEl().focus(); }
   });
 }
@@ -383,16 +408,21 @@ document.addEventListener('pointermove', e => {
     if (lp.made) drag = { it: lp.made, dx: 0, dy: 0 };
   }
   if (drag) { const n = toNorm(e); setPos(drag.it, n.x - drag.dx, n.y - drag.dy); }
+  if (resize) {
+    // Width is the single source of truth; CSS height:auto preserves each PNG's ratio.
+    const d = Math.hypot(e.clientX - resize.cx, e.clientY - resize.cy);
+    setWidth(resize.it, resize.w0 * d / resize.d0);
+  }
 });
 function endDrag(e) {
   if (lp) {
     if (!lp.made) addItem(lp.id); // plain tap/click adds at default position
     else if (e.type === 'pointerup' && !toNorm(e).inside) removeItem(lp.made.uid); // dropped outside the fish stage
   }
-  lp = null; drag = null;
+  lp = null; drag = null; resize = null;
 }
 document.addEventListener('pointerup', endDrag);
-document.addEventListener('pointercancel', () => { lp = null; drag = null; });
+document.addEventListener('pointercancel', () => { lp = null; drag = null; resize = null; });
 $('reflect').addEventListener('input', e => { reflectText = e.target.value; updateCount(); });
 
 /* Missing-image fallback */
