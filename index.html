@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ปล่อยปลาปล่อยใจ · Let the Fish Go, Let Your Heart Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=DM+Sans:wght@400;500;700&family=IBM+Plex+Sans+Thai:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="river" aria-hidden="true"><i></i><i></i></div>
+<div id="petals" aria-hidden="true"></div>
+
+<header class="top">
+  <span class="brand" data-i18n="title"></span>
+  <div class="lang" role="group" aria-label="Language / ภาษา">
+    <button data-act="lang" data-v="th" aria-pressed="true">ไทย</button>
+    <button data-act="lang" data-v="en" aria-pressed="false">EN</button>
+  </div>
+</header>
+
+<main>
+  <section class="stage" id="s0" aria-labelledby="h0">
+    <p class="en-tag">A River Made of Dreams</p>
+    <h1 id="h0" tabindex="-1" data-i18n="title"></h1>
+    <h2 class="en-title">Let the Fish Go, Let Your Heart Flow</h2>
+    <p class="poem" data-i18n="welcomePoem"></p>
+    <p class="note" data-i18n="welcomeNote"></p>
+    <button class="btn primary" data-act="start" data-i18n="begin"></button>
+  </section>
+
+  <section class="stage" id="s1" aria-labelledby="qText" hidden>
+    <p id="qCount" class="count" aria-live="polite"></p>
+    <div class="prog" aria-hidden="true"><i id="qBar"></i></div>
+    <h2 id="qText" tabindex="-1"></h2>
+    <div id="qOpts" class="opts" role="radiogroup" aria-labelledby="qText"></div>
+    <div class="nav">
+      <button class="btn ghost" data-act="qprev" data-i18n="prev"></button>
+      <button class="btn primary" data-act="qnext" id="qNext"></button>
+    </div>
+  </section>
+
+  <section class="stage" id="s2" aria-labelledby="h2" hidden>
+    <p class="count" data-i18n="yourFish"></p>
+    <div id="revFish" class="fishwrap reveal"></div>
+    <h2 id="h2" tabindex="-1"></h2>
+    <p id="revMeaning" class="meaning"></p>
+    <p id="revSym"></p>
+    <p id="revMsg" class="poem"></p>
+    <p class="note" data-i18n="disclaimer"></p>
+    <button class="btn primary" data-act="toDeco" data-i18n="toDeco"></button>
+  </section>
+
+  <section class="stage wide" id="s3" aria-labelledby="h3" hidden>
+    <h2 id="h3" tabindex="-1" data-i18n="decoTitle"></h2>
+    <p class="note" data-i18n="decoHint"></p>
+    <div class="decoGrid">
+      <div class="decoMain">
+        <div id="decoStage" class="fishbox live" tabindex="0" aria-label="Fish canvas"></div>
+        <div class="row-btns">
+          <button class="btn ghost" data-act="rmSel" data-i18n="removeSel"></button>
+          <button class="btn ghost" data-act="reset" data-i18n="resetDeco"></button>
+        </div>
+        <p id="notice" class="notice" aria-live="polite"></p>
+      </div>
+      <aside>
+        <h3 data-i18n="powerTitle"></h3>
+        <div id="powerMini" class="power compact"></div>
+      </aside>
+    </div>
+    <details class="drawer" open>
+      <summary data-i18n="library"></summary>
+      <div id="lib" class="lib"></div>
+    </details>
+    <button class="btn primary" data-act="toPower" data-i18n="next"></button>
+  </section>
+
+  <section class="stage" id="s4" aria-labelledby="h4" hidden>
+    <h2 id="h4" tabindex="-1" data-i18n="powerTitle"></h2>
+    <p class="note" data-i18n="powerNote"></p>
+    <div id="powerFull" class="power"></div>
+    <div class="nav">
+      <button class="btn ghost" data-act="backDeco" data-i18n="prev"></button>
+      <button class="btn primary" data-act="toReflect" data-i18n="next"></button>
+    </div>
+  </section>
+
+  <section class="stage" id="s5" aria-labelledby="h5" hidden>
+    <h2 id="h5" tabindex="-1" data-i18n="reflectTitle"></h2>
+    <p class="poem" data-i18n="reflectSub"></p>
+    <textarea id="reflect" maxlength="500" rows="6" data-i18n-ph="reflectPh" data-i18n-aria="reflectTitle"></textarea>
+    <p class="count" id="reflectCount" aria-live="off"></p>
+    <p class="note" data-i18n="privacy"></p>
+    <div class="nav">
+      <button class="btn ghost" data-act="toRelease" data-i18n="skip"></button>
+      <button class="btn primary" data-act="toRelease" data-i18n="next"></button>
+    </div>
+  </section>
+
+  <section class="stage wide" id="s6" aria-labelledby="h6" hidden>
+    <h2 id="h6" tabindex="-1" data-i18n="releaseTitle"></h2>
+    <p id="relMsg" class="poem"></p>
+    <div id="relWrap" class="relWrap">
+      <div id="riverTarget" class="target" aria-hidden="true"><span data-i18n="dropHere"></span></div>
+      <div id="relFish" class="relFish" aria-label="Drag the fish to the river"></div>
+    </div>
+    <p class="note" data-i18n="dragHint"></p>
+    <button class="btn primary" data-act="release" id="relBtn" data-i18n="releaseBtn"></button>
+  </section>
+
+  <section class="stage" id="s7" aria-labelledby="h7" hidden>
+    <h2 id="h7" tabindex="-1" data-i18n="title"></h2>
+    <p class="poem" data-i18n="closing"></p>
+    <p id="summary" class="note"></p>
+    <button class="btn primary" data-act="restart" data-i18n="restart"></button>
+  </section>
+</main>
+<script src="script.js"></script>
+</body>
+</html>
